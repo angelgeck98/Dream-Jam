@@ -3,13 +3,13 @@
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
 .utmp/
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Uu]ser[Ss]ettings/
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
 *.log
 
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be commited to version control.
@@ -97,3 +97,32 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+
+# --- Added for Unity Input System (new system) ---
+# Auto-generated C# from InputActions assets (safe to ignore if regenerated frequently)
+**/*.inputactions.generated.cs
+
+# --- Added for Unity AI Navigation ---
+# Optional baked NavMesh data (ignore if generated during build)
+**/NavMesh.asset
+**/NavMeshData.asset
+**/BakedNavMesh/
+NavMeshComponents*
+
+# --- Optional: Other Unity-generated caches (safe to ignore if not tracked yet) ---
+/.cache/
+/.local/
+*.tlog
+*.ipch
+
+# --- Optional: Unity Cloud or plastic SCM generated trash (if ever used) ---
+*.plastic/
+.plastic/
+*.plastic.meta
+
+# --- Optional: Remove Unity auto layout conflicts ---
+/UserSettings/Layouts/
+
+
+.vsconfig
