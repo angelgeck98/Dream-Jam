@@ -5,6 +5,9 @@ using UnityEngine;
 public class DogController : MonoBehaviour
 {
 
+    [Header("References")] [SerializeField] 
+    private int dogDamageAmount = 25;
+    
     [Header("References")]
     [SerializeField] private Transform player;
     [SerializeField] private Camera playerCamera;
@@ -105,7 +108,21 @@ public class DogController : MonoBehaviour
         // upward force for arc shape
         rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y + 5f, rb.velocity.z);
     }
-    
-   
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (currentState == DogState.Thrown)
+        {
+            Debug.Log("Thrown dog hit: " + collision.gameObject.name);
+            
+            IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
+            if (damageable != null)
+            {
+                damageable.TakeDamage(dogDamageAmount);
+                Debug.Log("Dog Dealth: " + dogDamageAmount + " damage!");
+            }
+        }
+    }
+
 }
 

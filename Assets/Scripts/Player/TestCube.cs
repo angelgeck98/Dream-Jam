@@ -23,6 +23,10 @@ public class NumGenerator : MonoBehaviour, IInteractable, IDamageable
     }
   }
 
+  public void TakeDamage(int damageAmount)
+  {
+    Damage(damageAmount);
+  }
 
   private void Die()
   {
