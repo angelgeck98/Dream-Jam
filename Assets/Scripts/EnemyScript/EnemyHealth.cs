@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy1 : MonoBehaviour, IDamageable
+public class Enemy1 : MonoBehaviour, IDamageable, IInteractable
 {
     [Header("Enemy Health Settings")]
-    [SerializeField] private int maxHealth = 50;
+    [SerializeField] private int maxHealth = 1;
     
     public int Health { get; set; }
     
@@ -38,6 +38,11 @@ public class Enemy1 : MonoBehaviour, IDamageable
         
         // Destroy the enemy
         Destroy(gameObject);
+    }
+    
+    public void Interact()
+    {
+        Debug.Log(Random.Range(0,100));
     }
     
 }
