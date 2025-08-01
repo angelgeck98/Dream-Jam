@@ -85,10 +85,11 @@ public class DogController : MonoBehaviour
         dribbleTimer = 0f;
     }
 
-    void StartCarrying()
+    public void StartCarrying()
     {
         currentState = DogState.Carrying;
         rb.isKinematic = true;
+        transform.parent = player;
     }
 
     void ThrowDog()
@@ -106,4 +107,3 @@ public class DogController : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y + 5f, rb.velocity.z);
     }
 }
-
