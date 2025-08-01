@@ -105,5 +105,7 @@ public class DogController : MonoBehaviour
         // upward force for arc shape
         rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y + 5f, rb.velocity.z);
     }
+    
+   
 }
 
