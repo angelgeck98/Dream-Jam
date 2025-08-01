@@ -1,0 +1,33 @@
+Ideas
+-Shot and died when working at Gas Station
+-Pomeranian Freak out uber (Dog in a car)
+-Giant wolves and Giant Kookaburra 
+
+
+-Game Idea-
+
+Objective 
+-Take sick dog (as in cool wearing hat) to the gas station cause he needs cigarettes
+-Enemies are Evil Kookaburra and Wolves 
+
+
+
+
+-Prototype- 
+-First Person Controller (Camera Following, Colliders)
+-Enemies (Visual Cone, Enemy Attack/Damage), (Flying Enemy/Same thing as ground) 
+-Gas Station Clerk Buying Cigarettes (Maybe dog smokign ciggarete animation) (END GAME) 
+
+
+
+-Environment- 
+Hiking 
+
+
+-Task- 
+Pablo: First Person Controller/Player Input 
+Angel: Enemy Controller 
+
+
+
+https://github.com/sopermanspace/Enemy/blob/main/Enemy.cs
