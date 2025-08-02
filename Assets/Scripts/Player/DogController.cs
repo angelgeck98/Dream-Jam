@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class DogController : MonoBehaviour
 {
@@ -19,18 +20,33 @@ public class DogController : MonoBehaviour
 
     [Header("ThrowSettings")]
     [SerializeField] private float throwForce = 15f;
+    
+    [Header("ReturnSettings")]
+    [SerializeField] private float returnSpeed = 5f;
+    [SerializeField] private float returnDistance = 5f;
+    [SerializeField] private float returnDelay = 1f; 
 
     private Rigidbody rb;
+    private NavMeshAgent navAgent;
     private Vector3 carryOffset = new Vector3(0, 0, 1f);
     private float dribbleTimer = 0f;
 
-    public enum DogState { Carrying, Dribbling, Thrown }
+    public enum DogState { Carrying, Dribbling, Thrown, Returning }
     public DogState currentState = DogState.Carrying;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        navAgent = GetComponent<NavMeshAgent>();
+        
         rb.isKinematic = true;
+
+        if (navAgent != null)
+        {
+            navAgent.enabled = false;
+        }
+        
+        
     }
 
     // Update is called once per frame
@@ -38,6 +54,11 @@ public class DogController : MonoBehaviour
     {
         HandleInput();
         UpdateDog();
+        
+        if (currentState == DogState.Returning && navAgent != null && navAgent.enabled)
+        {
+            navAgent.SetDestination(player.position);
+        }
     }
 
     void HandleInput()
@@ -78,6 +99,13 @@ public class DogController : MonoBehaviour
 
             case DogState.Thrown:
                 break;
+            
+            case DogState.Returning:
+                if (Vector3.Distance(transform.position, player.position) < returnDistance)
+                {
+                    StartCarrying();
+                }
+                break;
         }
     }
 
@@ -85,6 +113,12 @@ public class DogController : MonoBehaviour
     {
         currentState = DogState.Dribbling;
         rb.isKinematic = true;
+
+        if (navAgent != null)
+        {
+            navAgent.enabled = false;
+        }
+        
         dribbleTimer = 0f;
     }
 
@@ -93,21 +127,64 @@ public class DogController : MonoBehaviour
         currentState = DogState.Carrying;
         rb.isKinematic = true;
         transform.parent = player;
+        
+        if (navAgent != null)
+        {
+            navAgent.enabled = false;
+        }
     }
 
     void ThrowDog()
     {
         currentState = DogState.Thrown;
         rb.isKinematic = false; // enables physics
-
-
         transform.parent = null; // release from player
+        
+        if (navAgent != null)
+        {
+            navAgent.enabled = false;
+        }
 
         Vector3 throwDirection = playerCamera.transform.forward; // throw in camera's facing direction
         rb.velocity = throwDirection * throwForce;
 
         // upward force for arc shape
         rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y + 5f, rb.velocity.z);
+    }
+
+    void StartReturning()
+    {
+        currentState = DogState.Returning;
+
+        rb.isKinematic = true;
+
+        if (navAgent != null)
+        {
+          if(NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 1f, NavMesh.AllAreas))
+          {
+              navAgent.enabled = true;
+              transform.position = hit.position;
+              navAgent.speed = returnSpeed;
+              navAgent.SetDestination(player.position);
+          }
+          else
+          {
+              Debug.LogWarning("Dog too far way, teleporting to it");
+              if (NavMesh.SamplePosition(player.position, out NavMeshHit playerNavHit, 5f, NavMesh.AllAreas))
+              {
+                  transform.position = playerNavHit.position;
+                  navAgent.enabled = true;
+                  navAgent.SetDestination(player.position);
+              }
+              else
+              {
+                  Debug.LogError("No NavMesh");
+              }
+              
+              
+          }
+        }
+
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -122,7 +199,16 @@ public class DogController : MonoBehaviour
                 damageable.TakeDamage(dogDamageAmount);
                 Debug.Log("Dog Dealth: " + dogDamageAmount + " damage!");
             }
+
+            StartCoroutine(ReturnAfterDelay());
         }
     }
 
+    private IEnumerator ReturnAfterDelay()
+    {
+        yield return new WaitForSeconds(returnDelay);
+        StartReturning();
+    }
+
+   
 }
