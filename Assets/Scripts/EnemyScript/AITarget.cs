@@ -6,42 +6,42 @@ using UnityEngine.AI;
 public class AITarget : MonoBehaviour
 {
     public Transform Target;
-    public float AttackDistance;
-    public float speed = 10f;
+    public float AttackDistance = 2f;
+    public float speed = 3.5f;
 
     private NavMeshAgent m_Agent;
-
     private Animator m_Animator;
-
     private float m_distance;
-    
 
     void Start()
     {
         m_Agent = GetComponent<NavMeshAgent>();
         m_Animator = GetComponent<Animator>();
-        
+
+        if (m_Agent != null)
+        {
+            m_Agent.speed = speed;
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        m_distance = Vector3.Distance(m_Agent.transform.position, Target.position);
-        m_Agent.destination = Target.position * (speed * Time.deltaTime);
-        /*
+        if (Target == null || m_Agent == null) return;
+
+        m_distance = Vector3.Distance(transform.position, Target.position);
+
         if (m_distance < AttackDistance)
         {
             m_Agent.isStopped = true;
-            m_Animator.SetBool("Attack", true);
+            if (m_Animator != null)
+                m_Animator.SetBool("Attack", true);
         }
         else
         {
-         m_Agent.isStopped = false;
-          m_Animator.SetBool("Attack", false);
-          m_Agent.destination = Target.position
+            m_Agent.isStopped = false;
+            m_Agent.destination = Target.position;
+            if (m_Animator != null)
+                m_Animator.SetBool("Attack", false);
         }
-        */
-
-
     }
 }
