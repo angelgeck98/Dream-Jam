@@ -9,15 +9,16 @@ public class PlayerUIManager : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI livesText;
     [SerializeField] private GameObject gameOverPanel;
-    
+    [SerializeField] private GameOverScreen gameOverScreen;
+
     [Header("Player Reference")]
     [SerializeField] private PlayerDamage playerDamage;
     
     [Header("Lives Display Options")]
     [SerializeField] private bool useHeartIcons = false;
-    [SerializeField] private Image[] heartImages; // Optional: for heart icons
-    [SerializeField] private Sprite fullHeart;
-    [SerializeField] private Sprite emptyHeart;
+    [SerializeField] private Image heartDisplayImage;
+    [SerializeField] private Sprite[] heartSprites;
+
 
     private void Start()
     {
@@ -40,39 +41,33 @@ public class PlayerUIManager : MonoBehaviour
         // Hide game over panel initially
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
+
+        UpdateLivesUI(playerDamage.Lives);
     }
     
     private void UpdateLivesUI(int currentLives)
     {
-        // Update lives text
+        // Update lives debug text
         if (livesText != null)
-            livesText.text = "Lives: " + currentLives;
-        
-        // Update heart icons if using them
-        if (useHeartIcons && heartImages != null)
         {
-            for (int i = 0; i < heartImages.Length; i++)
-            {
-                if (heartImages[i] != null)
-                {
-                    if (i < currentLives)
-                        heartImages[i].sprite = fullHeart;
-                    else
-                        heartImages[i].sprite = emptyHeart;
-                }
-            }
+            livesText.text = "Lives: " + currentLives;
+        }
+
+        // Update heart icons if using them
+        if (heartDisplayImage != null && heartSprites != null && heartSprites.Length > 0)
+        {  
+            // reverse index and ensure array won't out of bounds
+            int spriteIndex = (heartSprites.Length) - currentLives;
+            spriteIndex = Mathf.Clamp(spriteIndex, 0, heartSprites.Length - 1);
+            heartDisplayImage.sprite = heartSprites[spriteIndex];
+            Debug.Log($"Lives: {currentLives}, Using sprite index: {spriteIndex}");
         }
     }
     
     private void ShowGameOver()
     {
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(true);
-            
-            // Optional: Pause the game
-            Time.timeScale = 0f;
-        }
+        Time.timeScale = 0f;
+        gameOverScreen.ShowGameOver();
     }
     
     private void OnPlayerHit()
