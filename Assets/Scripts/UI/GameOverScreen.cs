@@ -13,17 +13,22 @@ public class GameOverScreen : MonoBehaviour
     [SerializeField] private Image blackOverlay;
 
     [Header("Death Animation")]
-    [SerializeField] private Image animationImage;
-    [SerializeField] private float frameRate = 24f;
+    /*
+
+    
     [SerializeField] private bool loopLastFrames = true;
     [SerializeField] private int loopFrameCount = 5;
+    
+    */
+    //[SerializeField] private Animator deathAnimator;
+    [SerializeField] private Image animationImage;
     [SerializeField] private Sprite[] animationFrames;
-    private int index;
-    Coroutine coroutineAnim;
+    [SerializeField] private float frameRate = 24f;
 
     void Start()
     {
         InitializeScreen();
+
     }
 
     private void InitializeScreen()
@@ -36,9 +41,9 @@ public class GameOverScreen : MonoBehaviour
             blackOverlay.color = new Color(0, 0, 0, 0f); // transparent black
         }
 
-        if (animationImage != null)
+        if (animationImage!= null)
         {
-            animationImage.gameObject.SetActive(false);
+            animationImage.enabled = false;
         }
     }
 
@@ -54,22 +59,19 @@ public class GameOverScreen : MonoBehaviour
         if (blackOverlay == null) yield break;
 
         blackOverlay.color = Color.black;
-            yield return null;
+        yield return null;
     }
 
     private IEnumerator PlayFrameAnimation()
     {
+        animationImage.gameObject.SetActive(true);
 
-        yield return new WaitForSeconds(0.2f);
-        if (index >= animationFrames.Length)
+        float frameDuration = 1f / frameRate;
+
+        for (int i = 0; i < animationFrames.Length; i++)
         {
-            index = 0;
+            animationImage.sprite = animationFrames[i];
+            yield return new WaitForSeconds(frameDuration);
         }
-        animationImage.sprite = animationFrames[index];
-        index++;
-        coroutineAnim = StartCoroutine(PlayFrameAnimation());
     }
-
-
-
 }
