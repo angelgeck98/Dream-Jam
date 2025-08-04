@@ -4,6 +4,10 @@ using UnityEngine.AI;
 
 public class DogController : MonoBehaviour
 {
+    [SerializeField] private AudioClip throwingSoundClip;
+
+    private AudioSource audioSource;
+    
     [Header("Damage Settings")]
     [SerializeField] private int dogDamageAmount = 25;
 
@@ -28,7 +32,7 @@ public class DogController : MonoBehaviour
     private Rigidbody rb;
     private NavMeshAgent navAgent;
 
-    private Vector3 carryOffset = new Vector3(0, 0, 1f);
+    public Vector3 carryOffset = new Vector3(0, 0, 1f);
     private float dribbleTimer = 0f;
 
     public enum DogState { Carrying, Dribbling, Thrown, Returning }
@@ -38,6 +42,7 @@ public class DogController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         navAgent = GetComponent<NavMeshAgent>();
+        audioSource = GetComponent<AudioSource>();
 
         rb.isKinematic = true;
         if (navAgent != null) navAgent.enabled = false;
@@ -127,6 +132,11 @@ public class DogController : MonoBehaviour
 
         if (navAgent != null) navAgent.enabled = false;
 
+        if (audioSource != null && throwingSoundClip)
+        {
+            audioSource.PlayOneShot(throwingSoundClip);
+        }
+        
         Vector3 throwDirection = playerCamera.transform.forward.normalized;
         rb.velocity = throwDirection * throwForce + Vector3.up * upwardArc;
 
