@@ -659,6 +659,38 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1747598721}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &470947512
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 470947513}
+  m_Layer: 0
+  m_Name: '-Manager- '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &470947513
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 470947512}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -10.722145, y: 2.5267475, z: -23.29498}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1310941452}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &530023306
 GameObject:
   m_ObjectHideFlags: 0
@@ -1058,6 +1090,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 146746086}
     - target: {fileID: 8240372527656728996, guid: 9650029a8721a9f43acc892cd01fe8f1, type: 3}
+      propertyPath: carryOffset.y
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8240372527656728996, guid: 9650029a8721a9f43acc892cd01fe8f1, type: 3}
       propertyPath: dribbleHeight
       value: 1
       objectReference: {fileID: 0}
@@ -1069,6 +1105,18 @@ PrefabInstance:
       propertyPath: throwingSoundClip
       value: 
       objectReference: {fileID: 8300000, guid: 9fcfde52832be5e4d8bd419401bbf16b, type: 3}
+    - target: {fileID: 8240372527656728996, guid: 9650029a8721a9f43acc892cd01fe8f1, type: 3}
+      propertyPath: dribblingSoundClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 48cf0ddd2fd91fd49af257d370ecb7f1, type: 3}
+    - target: {fileID: 8240372527656728996, guid: 9650029a8721a9f43acc892cd01fe8f1, type: 3}
+      propertyPath: pickingUpSoundClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 6366c7ccb011f2849939e7b3c55afc3b, type: 3}
+    - target: {fileID: 8240372527656728996, guid: 9650029a8721a9f43acc892cd01fe8f1, type: 3}
+      propertyPath: returningSoundClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 63290fe272a86a849b0ecfa06c19cda3, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 2619516117788047857, guid: 9650029a8721a9f43acc892cd01fe8f1, type: 3}
@@ -1336,7 +1384,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1847,6 +1895,51 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!1 &1310941451
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1310941452}
+  - component: {fileID: 1310941453}
+  m_Layer: 0
+  m_Name: SoundFXManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1310941452
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310941451}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 10.722145, y: -2.5267475, z: 23.29498}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 470947513}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1310941453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310941451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85d0f78da34288746828db1f71198da2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundFXObject: {fileID: 3404265548590730878, guid: 55376b40ac1b53f40afcc4111a86ade5, type: 3}
 --- !u!1 &1395181366
 GameObject:
   m_ObjectHideFlags: 0
@@ -2638,3 +2731,4 @@ SceneRoots:
   - {fileID: 1507001846}
   - {fileID: 1747598721}
   - {fileID: 1582875480}
+  - {fileID: 470947513}

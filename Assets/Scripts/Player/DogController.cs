@@ -5,8 +5,10 @@ using UnityEngine.AI;
 public class DogController : MonoBehaviour
 {
     [SerializeField] private AudioClip throwingSoundClip;
+    [SerializeField] private AudioClip dribblingSoundClip;
+    [SerializeField] private AudioClip returningSoundClip;
+    
 
-    private AudioSource audioSource;
     
     [Header("Damage Settings")]
     [SerializeField] private int dogDamageAmount = 25;
@@ -42,7 +44,7 @@ public class DogController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         navAgent = GetComponent<NavMeshAgent>();
-        audioSource = GetComponent<AudioSource>();
+    
 
         rb.isKinematic = true;
         if (navAgent != null) navAgent.enabled = false;
@@ -111,8 +113,15 @@ public class DogController : MonoBehaviour
         currentState = DogState.Dribbling;
         dribbleTimer = 0f;
         rb.isKinematic = true;
+        
 
         if (navAgent != null) navAgent.enabled = false;
+
+        if ( dribblingSoundClip != null)
+        {
+            SoundFXManager.instance.PlayLoopingSound(dribblingSoundClip, transform, 0.5f);
+        }
+
     }
 
     public void StartCarrying()
@@ -122,6 +131,9 @@ public class DogController : MonoBehaviour
         rb.isKinematic = true;
 
         if (navAgent != null) navAgent.enabled = false;
+        
+        SoundFXManager.instance.StopLoopingSound();
+        
     }
 
     void ThrowDog()
@@ -131,11 +143,10 @@ public class DogController : MonoBehaviour
         rb.isKinematic = false;
 
         if (navAgent != null) navAgent.enabled = false;
-
-        if (audioSource != null && throwingSoundClip)
-        {
-            audioSource.PlayOneShot(throwingSoundClip);
-        }
+        
+        SoundFXManager.instance.StopLoopingSound();
+        SoundFXManager.instance.PlaySoundFX(throwingSoundClip, transform, 0.3f);
+        
         
         Vector3 throwDirection = playerCamera.transform.forward.normalized;
         rb.velocity = throwDirection * throwForce + Vector3.up * upwardArc;
@@ -145,8 +156,16 @@ public class DogController : MonoBehaviour
 
     void StartReturning()
     {
+        if (currentState == DogState.Returning)
+        {
+            return;
+        }
+        
+        
         currentState = DogState.Returning;
         rb.isKinematic = true;
+        
+        SoundFXManager.instance.PlayLoopingSound(returningSoundClip, transform, 0.7f);
 
         if (navAgent != null)
         {
@@ -156,6 +175,8 @@ public class DogController : MonoBehaviour
                 navAgent.enabled = true;
                 navAgent.speed = returnSpeed;
                 navAgent.SetDestination(player.position);
+                
+                
             }
             else
             {
