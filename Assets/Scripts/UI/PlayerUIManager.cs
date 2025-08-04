@@ -66,7 +66,7 @@ public class PlayerUIManager : MonoBehaviour
     
     private void ShowGameOver()
     {
-        //Time.timeScale = 0f;
+        Time.timeScale = 0f;
         gameOverScreen.ShowGameOver();
     }
     

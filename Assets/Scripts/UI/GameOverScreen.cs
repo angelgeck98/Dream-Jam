@@ -71,7 +71,7 @@ public class GameOverScreen : MonoBehaviour
         for (int i = 0; i < animationFrames.Length; i++)
         {
             animationImage.sprite = animationFrames[i];
-            yield return new WaitForSeconds(frameDuration);
+            yield return new WaitForSecondsRealtime(frameDuration);
         }
     }
 }
