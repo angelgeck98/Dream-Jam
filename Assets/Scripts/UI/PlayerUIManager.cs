@@ -19,6 +19,10 @@ public class PlayerUIManager : MonoBehaviour
     [SerializeField] private Image heartDisplayImage;
     [SerializeField] private Sprite[] heartSprites;
 
+    [Header("On Player Hit")]
+    [SerializeField] private float eggShakeDuration = 2f;
+    [SerializeField] private float eggShakeIntensity = 10f;
+
 
     private void Start()
     {
@@ -75,6 +79,7 @@ public class PlayerUIManager : MonoBehaviour
         // Optional: Add hit effects here
         // Examples: screen shake, red flash, hit sound, etc.
         Debug.Log("Player was hit! UI can show hit effects here.");
+        StartCoroutine(gameOverScreen.ShakeEgg(eggShakeDuration, eggShakeIntensity));
     }
     
     // Call this from a restart button
