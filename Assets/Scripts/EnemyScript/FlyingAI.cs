@@ -12,7 +12,12 @@ public class FlyingAI : MonoBehaviour
 
     public float MoveSpeed;
     public float FlyingHeight;
-
+    
+    
+    [SerializeField] private AudioClip flyingSoundClip;
+    [SerializeField] private AudioClip flappingSoundClip;
+    public bool hasStartedFollowing = false;
+   
     private void Start()
     {
         m_Agent = GetComponent<NavMeshAgent>();
@@ -27,12 +32,15 @@ public class FlyingAI : MonoBehaviour
          */
         m_Agent.speed = MoveSpeed;
         m_Agent.baseOffset = FlyingHeight;
+        
 
     }
 
     private void Update()
     {
         MoveToTarget();
+      
+       
         
         
     float distToPlayer = Vector3.Distance(transform.position, m_Target.position);
@@ -45,6 +53,8 @@ public class FlyingAI : MonoBehaviour
 
     private void MoveToTarget()
     {
+        
+        
         if (m_Target == null) return;
 
    
@@ -59,5 +69,37 @@ public class FlyingAI : MonoBehaviour
         adjustedTarget.y = m_Target.position.y + FlyingHeight;
 
         m_Agent.destination = adjustedTarget;
+
+       
+    }
+
+
+    // ReSharper disable Unity.PerformanceAnalysis
+    private void BeginFollowing()
+    {
+        if (!hasStartedFollowing)
+        {
+            hasStartedFollowing = true;
+            if (flappingSoundClip)
+            {
+               
+                SoundFXManager.instance.PlayLoopingSound(flappingSoundClip, transform, 0.7f);
+                
+            }
+        }
+    }
+
+    public void OnSpawned()
+    {
+        
+        Debug.Log("OnSpawned called on " + gameObject.name);
+        
+        if (flyingSoundClip)
+        {
+            SoundFXManager.instance.PlaySoundFX(flyingSoundClip, transform, 0.5f);
+        }
+
+        BeginFollowing();
+
     }
 }
