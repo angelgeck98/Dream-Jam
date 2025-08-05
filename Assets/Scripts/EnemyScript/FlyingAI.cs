@@ -33,10 +33,31 @@ public class FlyingAI : MonoBehaviour
     private void Update()
     {
         MoveToTarget();
+        
+        
+    float distToPlayer = Vector3.Distance(transform.position, m_Target.position);
+    if (distToPlayer < 1.0f)
+    {
+        // TODO: Call damage function
+        Debug.Log("Player in attack range!");
+    }
     }
 
     private void MoveToTarget()
     {
-        m_Agent.destination = m_Target.position;
+        if (m_Target == null) return;
+
+   
+        Vector3 dir = (m_Target.position - transform.position).normalized;
+
+       
+        Vector3 offset = dir * -2.5f; // negative to stay ~1.5 units away from player
+
+        Vector3 adjustedTarget = m_Target.position + offset;
+
+       
+        adjustedTarget.y = m_Target.position.y + FlyingHeight;
+
+        m_Agent.destination = adjustedTarget;
     }
 }
