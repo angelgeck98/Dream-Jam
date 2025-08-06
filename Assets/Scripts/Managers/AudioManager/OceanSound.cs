@@ -1,19 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class OceanAmbientSound : MonoBehaviour
 {
     [Header("Ocean Audio")]
     [SerializeField] private AudioClip oceanSoundClip;
-    [SerializeField] private float volume = 0.3f;
+    [SerializeField] private AudioClip songSoundClip;
+    [SerializeField] private float oceanVolume = 50f;
+    [SerializeField] private float songVolume = 20f;
     
     [Header("Distance Settings")]
     [SerializeField] private bool useDistanceVolume = true;
-    [SerializeField] private float maxDistance = 50f; // Max distance to hear ocean
-    [SerializeField] private float minVolume = 0.05f; // Minimum volume when far
+    [SerializeField] private float maxDistance = 50f;
+    [SerializeField] private float minVolume = 0.05f;
     
     private Transform player;
+    private AudioSource oceanAudioSource;
+    private AudioSource songAudioSource;
     private bool isPlaying = false;
 
     void Start()
@@ -25,17 +27,56 @@ public class OceanAmbientSound : MonoBehaviour
             player = playerObj.transform;
         }
 
-        // Start playing ocean sound
-        if (oceanSoundClip != null && SoundFXManager.instance != null)
+        // Create separate AudioSources for each sound
+        SetupAudioSources();
+        
+        // Start playing both sounds
+        PlayAmbientSounds();
+    }
+
+    private void SetupAudioSources()
+    {
+        // Ocean waves AudioSource
+        if (oceanSoundClip != null)
         {
-            SoundFXManager.instance.PlayLoopingSound(oceanSoundClip, transform, volume);
-            isPlaying = true;
+            oceanAudioSource = gameObject.AddComponent<AudioSource>();
+            oceanAudioSource.clip = oceanSoundClip;
+            oceanAudioSource.loop = true;
+            oceanAudioSource.volume = oceanVolume;
+            oceanAudioSource.spatialBlend = 1f; // 3D sound
+            oceanAudioSource.rolloffMode = AudioRolloffMode.Linear;
+            oceanAudioSource.maxDistance = maxDistance;
         }
+
+        // Song AudioSource  
+        if (songSoundClip != null)
+        {
+            songAudioSource = gameObject.AddComponent<AudioSource>();
+            songAudioSource.clip = songSoundClip;
+            songAudioSource.loop = true;
+            songAudioSource.volume = songVolume;
+            songAudioSource.spatialBlend = 0f; // 2D sound (plays everywhere)
+            // For music, you might want spatialBlend = 0f so it plays at consistent volume
+        }
+    }
+
+    private void PlayAmbientSounds()
+    {
+        if (oceanAudioSource != null)
+        {
+            oceanAudioSource.Play();
+        }
+        
+        if (songAudioSource != null)
+        {
+            songAudioSource.Play();
+        }
+        
+        isPlaying = true;
     }
 
     void Update()
     {
-        // Adjust volume based on distance to player (optional)
         if (useDistanceVolume && player != null && isPlaying)
         {
             UpdateVolumeByDistance();
@@ -46,18 +87,32 @@ public class OceanAmbientSound : MonoBehaviour
     {
         float distance = Vector3.Distance(transform.position, player.position);
         float volumePercent = Mathf.Clamp01(1f - (distance / maxDistance));
-        float adjustedVolume = Mathf.Lerp(minVolume, volume, volumePercent);
         
-        // Note: You'd need to modify SoundFXManager to support volume changes
-        // For now, this is just the calculation
+        // Update ocean volume based on distance
+        if (oceanAudioSource != null)
+        {
+            float adjustedOceanVolume = Mathf.Lerp(minVolume, oceanVolume, volumePercent);
+            oceanAudioSource.volume = adjustedOceanVolume;
+        }
+        
+        // Song might stay constant or also fade with distance
+        if (songAudioSource != null)
+        {
+            float adjustedSongVolume = Mathf.Lerp(minVolume * 0.5f, songVolume, volumePercent);
+            songAudioSource.volume = adjustedSongVolume;
+        }
     }
 
-    // Stop ocean sound when destroyed
     void OnDestroy()
     {
-        if (isPlaying && SoundFXManager.instance != null)
+        if (oceanAudioSource != null)
         {
-            SoundFXManager.instance.StopLoopingSound();
+            oceanAudioSource.Stop();
+        }
+        
+        if (songAudioSource != null)
+        {
+            songAudioSource.Stop();
         }
     }
 

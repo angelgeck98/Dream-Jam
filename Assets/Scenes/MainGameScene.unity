@@ -570,7 +570,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   oceanSoundClip: {fileID: 8300000, guid: debce8f4067c01148beb8d7a9584c295, type: 3}
-  volume: 0.09
+  songSoundClip: {fileID: 8300000, guid: 65fce86e8a4eda041888dff442701eb4, type: 3}
+  oceanVolume: 80
+  songVolume: 25
   useDistanceVolume: 1
   maxDistance: 50
   minVolume: 0.05
