@@ -124,5 +124,9 @@ NavMeshComponents*
 # --- Optional: Remove Unity auto layout conflicts ---
 /UserSettings/Layouts/
 
+/Assets/LeanTween/
+/Assets/LeanTween.meta
+/Assets/Resources/
+/Assets/Resources.meta
 
 .vsconfig
