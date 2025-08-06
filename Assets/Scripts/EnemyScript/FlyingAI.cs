@@ -1,105 +1,130 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class FlyingAI : MonoBehaviour
 {
-  
-    private NavMeshAgent m_Agent;
-    private Animator m_Animator;
-    private Transform m_Target;
-
-    public float MoveSpeed;
-    public float FlyingHeight;
+    [Header("Movement Settings")]
+    public float moveSpeed = 5f;
+    public float flyingHeight = 3f;
+    public float followDistance = 2.5f;
+    public float rotationSpeed = 5f;
     
-    
+    [Header("Audio")]
     [SerializeField] private AudioClip flyingSoundClip;
     [SerializeField] private AudioClip flappingSoundClip;
-    public bool hasStartedFollowing = false;
-   
+    
+    [Header("Attack Settings")]
+    [SerializeField] private float attackRange = 1.0f;
+    
+    private Animator m_Animator;
+    private Transform m_Target;
+    private bool hasStartedFollowing = false;
+
     private void Start()
     {
-        m_Agent = GetComponent<NavMeshAgent>();
         m_Animator = GetComponent<Animator>();
         m_Target = GameObject.FindGameObjectWithTag("Player").transform;
         
-        /*
-         Random flapping wings animation timing 
-         float randomAnimSpeed = Random.Range(0.1f, 0.5f); 
-         float newAnimSpeed = Mathf.Round(randomAnimSpeed * 10)/ 10;
-         m_animator.speed = newAnimSpeed; 
-         */
-        m_Agent.speed = MoveSpeed;
-        m_Agent.baseOffset = FlyingHeight;
-        
-
+        // Optional: Random animation speed for wing flapping variety
+        if (m_Animator != null)
+        {
+            float randomAnimSpeed = Random.Range(0.8f, 1.2f);
+            m_Animator.speed = randomAnimSpeed;
+        }
     }
 
     private void Update()
     {
-        MoveToTarget();
-      
-       
-        
-        
-    float distToPlayer = Vector3.Distance(transform.position, m_Target.position);
-    if (distToPlayer < 1.0f)
-    {
-        // TODO: Call damage function
-        Debug.Log("Player in attack range!");
-    }
+        if (hasStartedFollowing)
+        {
+            MoveToTarget();
+            CheckAttackRange();
+        }
     }
 
     private void MoveToTarget()
     {
-        
-        
         if (m_Target == null) return;
 
-   
-        Vector3 dir = (m_Target.position - transform.position).normalized;
+        // Calculate target position (behind player at flying height)
+        Vector3 playerDirection = m_Target.forward;
+        Vector3 targetPosition = m_Target.position - (playerDirection * followDistance);
+        targetPosition.y = m_Target.position.y + flyingHeight;
 
-       
-        Vector3 offset = dir * -2.5f; // negative to stay ~1.5 units away from player
+        // Move towards target position
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
 
-        Vector3 adjustedTarget = m_Target.position + offset;
-
-       
-        adjustedTarget.y = m_Target.position.y + FlyingHeight;
-
-        m_Agent.destination = adjustedTarget;
-
-       
+        // Rotate to look at player
+        Vector3 lookDirection = (m_Target.position - transform.position).normalized;
+        if (lookDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
     }
 
+    private void CheckAttackRange()
+    {
+        if (m_Target == null) return;
+        
+        float distToPlayer = Vector3.Distance(transform.position, m_Target.position);
+        if (distToPlayer < attackRange)
+        {
+            // TODO: Call damage function
+            Debug.Log("Player in attack range!");
+        }
+    }
 
-    // ReSharper disable Unity.PerformanceAnalysis
     private void BeginFollowing()
     {
         if (!hasStartedFollowing)
         {
             hasStartedFollowing = true;
-            if (flappingSoundClip)
+            if (flappingSoundClip != null)
             {
-               
                 SoundFXManager.instance.PlayLoopingSound(flappingSoundClip, transform, 0.7f);
-                
             }
         }
     }
 
     public void OnSpawned()
     {
-        
         Debug.Log("OnSpawned called on " + gameObject.name);
         
-        if (flyingSoundClip)
+        if (flyingSoundClip != null)
         {
             SoundFXManager.instance.PlaySoundFX(flyingSoundClip, transform, 0.5f);
         }
 
         BeginFollowing();
+    }
 
+    // Optional: Stop following (useful for cleanup)
+    public void StopFollowing()
+    {
+        hasStartedFollowing = false;
+        if (SoundFXManager.instance != null)
+        {
+            SoundFXManager.instance.StopLoopingSound();
+        }
+    }
+
+    // Gizmo to visualize attack range
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+        
+        if (m_Target != null)
+        {
+            Gizmos.color = Color.blue;
+            Vector3 targetPos = m_Target.position - (m_Target.forward * followDistance);
+            targetPos.y = m_Target.position.y + flyingHeight;
+            Gizmos.DrawWireSphere(targetPos, 0.5f);
+            
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(transform.position, targetPos);
+        }
     }
 }

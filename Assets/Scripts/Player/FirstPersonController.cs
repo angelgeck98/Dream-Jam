@@ -6,13 +6,13 @@ public class FirstPersonController : MonoBehaviour
 {
     [Header("Movement Speed")]
     [SerializeField] private float walkSpeed = 3.0f;
-    [SerializeField] private float sprintMultipler = 2.0f;
+    [SerializeField] private float sprintMultiplier = 2.0f;
 
     [Header("Jump Parameters")]
     [SerializeField] private float jumpForce = 5.0f;
-    [SerializeField] private float gravityMultipler = 1.0f;
+    [SerializeField] private float gravityMultiplier = 2.0f; // Increased for better grounding
 
-    [Header("Movement Speed")]
+    [Header("Look Settings")]
     [SerializeField] private float mouseSensitivity = 0.1f;
     [SerializeField] private float upDownLookRange = 80f;
 
@@ -23,17 +23,18 @@ public class FirstPersonController : MonoBehaviour
 
     private Vector3 currentMovement;
     private float verticalRotation;
-    private float CurrentSpeed => walkSpeed * (playerInputHandler.SprintTriggered ? sprintMultipler : 1);
+    private float CurrentSpeed => walkSpeed * (playerInputHandler.SprintTriggered ? sprintMultiplier : 1);
 
-
-    // Start is called before the first frame update
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        
+        // Ensure CharacterController is properly configured
+        if (characterController == null)
+            characterController = GetComponent<CharacterController>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         HandleMovement();
@@ -51,7 +52,8 @@ public class FirstPersonController : MonoBehaviour
     {
         if (characterController.isGrounded)
         {
-            currentMovement.y = -0.5f;
+            // Keep player grounded with stronger downward force
+            currentMovement.y = -2f;
 
             if (playerInputHandler.JumpTriggered)
             {
@@ -60,17 +62,24 @@ public class FirstPersonController : MonoBehaviour
         }
         else 
         {
-            currentMovement.y += Physics.gravity.y * gravityMultipler * Time.deltaTime;
+            // Apply stronger gravity to prevent floating/climbing
+            currentMovement.y += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
         }
     }
 
     private void HandleMovement()
     {
+        // Only allow horizontal movement - let gravity handle Y
         Vector3 worldDirection = CalculateWorldDirection();
-        currentMovement.x = worldDirection.x * CurrentSpeed;
-        currentMovement.z = worldDirection.z * CurrentSpeed;
+        
+        // Keep previous Y velocity and only change X/Z
+        float previousY = currentMovement.y;
+        currentMovement = worldDirection * CurrentSpeed;
+        currentMovement.y = previousY;
 
         HandleJump();
+        
+        // Use Move() which respects collisions and slope limits
         characterController.Move(currentMovement * Time.deltaTime);
     }
 
@@ -82,7 +91,7 @@ public class FirstPersonController : MonoBehaviour
     private void ApplyVerticalRotation(float rotationAmount)
     {
         verticalRotation = Mathf.Clamp(verticalRotation - rotationAmount, -upDownLookRange, upDownLookRange);
-        mainCamera.transform.localRotation = Quaternion.Euler(verticalRotation, 0 , 0);
+        mainCamera.transform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
     }
 
     private void HandleRotation()
