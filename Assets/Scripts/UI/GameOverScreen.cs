@@ -179,7 +179,7 @@ public class GameOverScreen : MonoBehaviour
     #endregion
 
     #region Restart Sequence
-    private IEnumerator RestartSequence()
+    public IEnumerator RestartSequence()
     {
         Debug.Log("Starting restart sequence");
 
