@@ -81,10 +81,16 @@ public class PlayerUIManager : MonoBehaviour
         Debug.Log("Player was hit! UI can show hit effects here.");
         StartCoroutine(gameOverScreen.ShakeEgg(eggShakeDuration, eggShakeIntensity));
     }
+
+    public void OnRestartButtonClicked() 
+    {
+        StartCoroutine(RestartGame());
+    }
     
     // Call this from a restart button
-    public void RestartGame()
+    public IEnumerator RestartGame()
     {
+        yield return StartCoroutine(gameOverScreen.RestartSequence());
         Time.timeScale = 1f;
         UnityEngine.SceneManagement.SceneManager.LoadScene(
             UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
