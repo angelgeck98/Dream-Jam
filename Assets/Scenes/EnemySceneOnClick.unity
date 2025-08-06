@@ -179,9 +179,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 3
-  sprintMultipler: 2
+  sprintMultiplier: 2
   jumpForce: 5
-  gravityMultipler: 1
+  gravityMultiplier: 2
   mouseSensitivity: 0.1
   upDownLookRange: 80
   characterController: {fileID: 16910960}
@@ -386,7 +386,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 416f99b3f76a6d549a92586d462a63cb, type: 2}
+  - {fileID: 2100000, guid: 7830101c78cf9624684d85a5c722e9af, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -469,6 +469,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc9a394a06762a544bfe2e0b3efb9940, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  throwingSoundClip: {fileID: 0}
+  dribblingSoundClip: {fileID: 0}
+  returningSoundClip: {fileID: 0}
   dogDamageAmount: 2
   player: {fileID: 16910962}
   playerCamera: {fileID: 479609743}
@@ -480,6 +483,7 @@ MonoBehaviour:
   returnDistance: 2
   returnDelay: 1
   returnSpeed: 5
+  carryOffset: {x: 0, y: 0, z: 1}
   currentState: 0
 --- !u!4 &428981643
 Transform:
@@ -1023,7 +1027,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 7830101c78cf9624684d85a5c722e9af, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1631,6 +1635,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1249945194}
   - component: {fileID: 1249945193}
+  - component: {fileID: 1249945195}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -1715,6 +1720,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &1249945195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249945192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1 &1503788735
 GameObject:
   m_ObjectHideFlags: 0
@@ -1778,7 +1806,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 7830101c78cf9624684d85a5c722e9af, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2163,7 +2191,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3601d61fe7eddf847b5c079cec0f6792, type: 2}
+  - {fileID: 2100000, guid: 468db67a888e664419418da304ecc56b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

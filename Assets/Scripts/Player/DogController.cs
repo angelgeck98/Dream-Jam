@@ -1,15 +1,12 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class DogController : MonoBehaviour
 {
     [SerializeField] private AudioClip throwingSoundClip;
     [SerializeField] private AudioClip dribblingSoundClip;
     [SerializeField] private AudioClip returningSoundClip;
-    
 
-    
     [Header("Damage Settings")]
     [SerializeField] private int dogDamageAmount = 25;
 
@@ -29,11 +26,10 @@ public class DogController : MonoBehaviour
     [Header("Return Settings")]
     [SerializeField] private float returnDistance = 2f;
     [SerializeField] private float returnDelay = 1f;
-    [SerializeField] private float returnSpeed = 5f;
+    [SerializeField] private float returnSpeed = 8f;
+    [SerializeField] private float returnRotationSpeed = 5f;
 
     private Rigidbody rb;
-    private NavMeshAgent navAgent;
-
     public Vector3 carryOffset = new Vector3(0, 0, 1f);
     private float dribbleTimer = 0f;
 
@@ -43,11 +39,7 @@ public class DogController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        navAgent = GetComponent<NavMeshAgent>();
-    
-
         rb.isKinematic = true;
-        if (navAgent != null) navAgent.enabled = false;
     }
 
     void Update()
@@ -96,13 +88,22 @@ public class DogController : MonoBehaviour
                 break;
 
             case DogState.Returning:
-                if (navAgent.enabled)
+                // Direct movement back to player - like a basketball rolling back
+                Vector3 targetPosition = player.position + player.TransformDirection(carryOffset);
+                transform.position = Vector3.MoveTowards(transform.position, targetPosition, returnSpeed * Time.deltaTime);
+                
+                // Smooth rotation toward player
+                Vector3 directionToPlayer = (player.position - transform.position).normalized;
+                if (directionToPlayer != Vector3.zero)
                 {
-                    navAgent.SetDestination(player.position);
-                    if (Vector3.Distance(transform.position, player.position) < returnDistance)
-                    {
-                        StartCarrying();
-                    }
+                    Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, returnRotationSpeed * Time.deltaTime);
+                }
+                
+                // Check if close enough to start carrying
+                if (Vector3.Distance(transform.position, player.position) < returnDistance)
+                {
+                    StartCarrying();
                 }
                 break;
         }
@@ -113,15 +114,11 @@ public class DogController : MonoBehaviour
         currentState = DogState.Dribbling;
         dribbleTimer = 0f;
         rb.isKinematic = true;
-        
 
-        if (navAgent != null) navAgent.enabled = false;
-
-        if ( dribblingSoundClip != null)
+        if (dribblingSoundClip != null)
         {
             SoundFXManager.instance.PlayLoopingSound(dribblingSoundClip, transform, 0.5f);
         }
-
     }
 
     public void StartCarrying()
@@ -129,11 +126,12 @@ public class DogController : MonoBehaviour
         currentState = DogState.Carrying;
         transform.parent = player;
         rb.isKinematic = true;
-
-        if (navAgent != null) navAgent.enabled = false;
         
-        SoundFXManager.instance.StopLoopingSound();
-        
+        // Stop any return sounds
+        if (SoundFXManager.instance != null)
+        {
+            SoundFXManager.instance.StopLoopingSound();
+        }
     }
 
     void ThrowDog()
@@ -141,12 +139,15 @@ public class DogController : MonoBehaviour
         currentState = DogState.Thrown;
         transform.parent = null;
         rb.isKinematic = false;
-
-        if (navAgent != null) navAgent.enabled = false;
         
-        SoundFXManager.instance.StopLoopingSound();
-        SoundFXManager.instance.PlaySoundFX(throwingSoundClip, transform, 0.3f);
-        
+        if (SoundFXManager.instance != null)
+        {
+            SoundFXManager.instance.StopLoopingSound();
+            if (throwingSoundClip != null)
+            {
+                SoundFXManager.instance.PlaySoundFX(throwingSoundClip, transform, 0.3f);
+            }
+        }
         
         Vector3 throwDirection = playerCamera.transform.forward.normalized;
         rb.velocity = throwDirection * throwForce + Vector3.up * upwardArc;
@@ -161,37 +162,12 @@ public class DogController : MonoBehaviour
             return;
         }
         
-        
         currentState = DogState.Returning;
-        rb.isKinematic = true;
+        rb.isKinematic = true; // Stop physics, use direct movement
         
-        SoundFXManager.instance.PlayLoopingSound(returningSoundClip, transform, 0.7f);
-
-        if (navAgent != null)
+        if (returningSoundClip != null && SoundFXManager.instance != null)
         {
-            if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 1f, NavMesh.AllAreas))
-            {
-                transform.position = hit.position;
-                navAgent.enabled = true;
-                navAgent.speed = returnSpeed;
-                navAgent.SetDestination(player.position);
-                
-                
-            }
-            else
-            {
-                Debug.LogWarning("Dog too far from NavMesh — teleporting...");
-                if (NavMesh.SamplePosition(player.position, out NavMeshHit playerHit, 5f, NavMesh.AllAreas))
-                {
-                    transform.position = playerHit.position;
-                    navAgent.enabled = true;
-                    navAgent.SetDestination(player.position);
-                }
-                else
-                {
-                    Debug.LogError("Could not find a valid NavMesh position.");
-                }
-            }
+            SoundFXManager.instance.PlayLoopingSound(returningSoundClip, transform, 0.7f);
         }
     }
 
@@ -201,12 +177,15 @@ public class DogController : MonoBehaviour
         {
             Debug.Log("Dog hit: " + collision.gameObject.name);
 
+            // Deal damage if the object can take damage
             IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
             if (damageable != null)
             {
                 damageable.TakeDamage(dogDamageAmount);
                 Debug.Log("Dog dealt damage: " + dogDamageAmount);
             }
+
+
 
             StartCoroutine(ReturnAfterDelay());
         }
@@ -216,5 +195,15 @@ public class DogController : MonoBehaviour
     {
         yield return new WaitForSeconds(returnDelay);
         StartReturning();
+    }
+
+    // Optional: Gizmo to visualize return distance
+    private void OnDrawGizmosSelected()
+    {
+        if (player != null)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(player.position, returnDistance);
+        }
     }
 }
