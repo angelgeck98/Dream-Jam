@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FlyingAI : MonoBehaviour
@@ -28,7 +26,6 @@ public class FlyingAI : MonoBehaviour
         m_Animator = GetComponent<Animator>();
         m_Target = GameObject.FindGameObjectWithTag("Player").transform;
         
-        // Optional: Random animation speed for wing flapping variety
         if (m_Animator != null)
         {
             float randomAnimSpeed = Random.Range(0.8f, 1.2f);
@@ -57,15 +54,12 @@ public class FlyingAI : MonoBehaviour
     {
         if (m_Target == null) return;
 
-        // Calculate target position (behind player at flying height)
         Vector3 playerDirection = m_Target.forward;
         Vector3 targetPosition = m_Target.position - (playerDirection * followDistance);
         targetPosition.y = m_Target.position.y + flyingHeight;
 
-        // Move towards target position
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
 
-        // Rotate to look at player
         Vector3 lookDirection = (m_Target.position - transform.position).normalized;
         if (lookDirection != Vector3.zero)
         {
@@ -81,7 +75,6 @@ public class FlyingAI : MonoBehaviour
         float distToPlayer = Vector3.Distance(transform.position, m_Target.position);
         if (distToPlayer < attackRange)
         {
-            // TODO: Call damage function
             Debug.Log("Player in attack range!");
         }
     }
@@ -110,9 +103,6 @@ public class FlyingAI : MonoBehaviour
         BeginFollowing();
     }
 
-
-
-    // Gizmo to visualize attack range
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

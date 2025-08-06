@@ -294,7 +294,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6075330197203528459, guid: 4dfb45271fa0a9f4989f53b5b48580c8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.2
+      value: -1.2
       objectReference: {fileID: 0}
     - target: {fileID: 8282969734530938060, guid: 4dfb45271fa0a9f4989f53b5b48580c8, type: 3}
       propertyPath: songVolume
@@ -599,11 +599,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 401624695700320073, guid: c84916683b8ae5e4593a8327eb150891, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 11.018
+      value: 19.5
       objectReference: {fileID: 0}
     - target: {fileID: 401624695700320073, guid: c84916683b8ae5e4593a8327eb150891, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 23.483
+      value: 20.42
       objectReference: {fileID: 0}
     - target: {fileID: 401624695700320073, guid: c84916683b8ae5e4593a8327eb150891, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1000,6 +1000,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   invincibilityTime: 1
+  fallDamageYLevel: 3.5
 --- !u!224 &1469824316 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7857905876736001066, guid: 39e0bae483eb9044496ef841b552076c, type: 3}
