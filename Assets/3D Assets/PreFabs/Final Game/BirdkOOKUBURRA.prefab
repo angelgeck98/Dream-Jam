@@ -120,8 +120,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 2.3255155
-  m_Center: {x: 2.6729924e-10, y: 0.29117632, z: 0.25053072}
+  m_Radius: 2.7348454
+  m_Center: {x: 2.6729924e-10, y: 0.18447685, z: 0.25053072}
 --- !u!114 &7940165876221852842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,12 +148,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 9
-  flyingHeight: 6
+  flyingHeight: 4
   followDistance: 2
   rotationSpeed: 5
   flyingSoundClip: {fileID: 8300000, guid: f3ae173a5b6dfeb48a5588e67c6da3ac, type: 3}
   flappingSoundClip: {fileID: 8300000, guid: 08f71467890a0af4b8857c995e8338e8, type: 3}
-  attackRange: 0
+  damageAmount: 10
+  attackCooldown: 1
 --- !u!114 &4186106457522651631
 MonoBehaviour:
   m_ObjectHideFlags: 0

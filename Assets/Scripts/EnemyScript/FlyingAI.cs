@@ -15,8 +15,10 @@ public class FlyingAI : MonoBehaviour
     private AudioSource _flappingAudioSource;
     
     [Header("Attack Settings")]
-    [SerializeField] private float attackRange = 1.0f;
+    [SerializeField] private float damageAmount = 10f;
+    [SerializeField] private float attackCooldown = 1f;
     
+    private float lastAttackTime = 0f;
     private Animator m_Animator;
     private Transform m_Target;
     private bool hasStartedFollowing = false;
@@ -38,7 +40,7 @@ public class FlyingAI : MonoBehaviour
         if (hasStartedFollowing)
         {
             MoveToTarget();
-            CheckAttackRange();
+            // Removed CheckAttackRange() - now using collision detection
         }
     }
     
@@ -53,10 +55,9 @@ public class FlyingAI : MonoBehaviour
     private void MoveToTarget()
     {
         if (m_Target == null) return;
-
-        Vector3 playerDirection = m_Target.forward;
-        Vector3 targetPosition = m_Target.position - (playerDirection * followDistance);
-        targetPosition.y = m_Target.position.y + flyingHeight;
+        
+        Vector3 targetPosition = m_Target.position;
+        targetPosition.y += flyingHeight;
 
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
 
@@ -68,15 +69,33 @@ public class FlyingAI : MonoBehaviour
         }
     }
 
-    private void CheckAttackRange()
+    // Collision-based damage using your IDamageable interface
+    private void OnTriggerEnter(Collider other)
     {
-        if (m_Target == null) return;
-        
-        float distToPlayer = Vector3.Distance(transform.position, m_Target.position);
-        if (distToPlayer < attackRange)
+        // Check if the object we collided with implements IDamageable
+        IDamageable damageable = other.GetComponent<IDamageable>();
+        if (damageable != null && Time.time >= lastAttackTime + attackCooldown)
         {
-            Debug.Log("Player in attack range!");
+            AttackTarget(damageable);
+            lastAttackTime = Time.time;
         }
+    }
+    
+    private void AttackTarget(IDamageable target)
+    {
+        Debug.Log($"{gameObject.name} attacking for {damageAmount} damage!");
+        
+        // Use your interface method
+        target.TakeDamage((int)damageAmount);
+        
+        // Optional: Play attack animation
+        if (m_Animator != null)
+        {
+            m_Animator.SetTrigger("Attack"); // Make sure you have an "Attack" trigger in your animator
+        }
+        
+        // Optional: Play attack sound
+        // SoundFXManager.instance.PlaySoundFX(attackSoundClip, transform, 0.8f);
     }
 
     private void BeginFollowing()
@@ -105,9 +124,6 @@ public class FlyingAI : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-        
         if (m_Target != null)
         {
             Gizmos.color = Color.blue;
