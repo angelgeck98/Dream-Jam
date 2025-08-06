@@ -18,7 +18,9 @@ public class PlayerDamage : MonoBehaviour, IDamageable
     
     [Header("Hit Settings")]
     [SerializeField] private float invincibilityTime = 1f; // Brief invincibility after being hit
+    [SerializeField] private float fallDamageYLevel = 3.5f;
     private bool isInvincible = false;
+    private bool hasFallen = false;
 
     private void Start()
     {
@@ -28,6 +30,17 @@ public class PlayerDamage : MonoBehaviour, IDamageable
         // Notify UI of initial value
         OnLivesChanged?.Invoke(Lives);
     }
+    private void Update()
+    {
+        // Check for fall damage
+        if (transform.position.y <= fallDamageYLevel && hasFallen == false)
+        {
+            Debug.Log("Player fell below Y level " + fallDamageYLevel + "! Taking fall damage.");
+            hasFallen = true;
+            TakeDamage(30);
+        }
+    }
+
 
     public void Damage(int amount)
     {
@@ -42,8 +55,10 @@ public class PlayerDamage : MonoBehaviour, IDamageable
             Debug.Log("Player is invincible, ignoring damage");
             return;
         }
-        
-        Lives--;
+        if (amount >= 30) Lives = 0;
+        else { Lives--; }
+ 
+    
         Debug.Log("Player hit! Lives remaining: " + Lives);
         
         // Fire events
