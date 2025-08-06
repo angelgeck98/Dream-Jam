@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 9
-  flyingHeight: 3
+  flyingHeight: 6
   followDistance: 2
   rotationSpeed: 5
   flyingSoundClip: {fileID: 8300000, guid: f3ae173a5b6dfeb48a5588e67c6da3ac, type: 3}
