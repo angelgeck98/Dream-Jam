@@ -64,13 +64,16 @@ PrefabInstance:
       addedObject: {fileID: 375019543719043021}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f7c3b09251564e045b01150c2b74423b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2632149958212888759}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f7c3b09251564e045b01150c2b74423b, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 7940165876221852842}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f7c3b09251564e045b01150c2b74423b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5906240264843517566}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f7c3b09251564e045b01150c2b74423b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4186106457522651631}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f7c3b09251564e045b01150c2b74423b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4797301254543883421}
   m_SourcePrefab: {fileID: 100100000, guid: f7c3b09251564e045b01150c2b74423b, type: 3}
 --- !u!1 &6911814585987332355 stripped
 GameObject:
@@ -117,30 +120,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 1.8041672
-  m_Center: {x: 3.1068093e-10, y: 0.7951236, z: -0.5378838}
---- !u!195 &2632149958212888759
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6911814585987332355}
-  m_Enabled: 1
-  m_AgentTypeID: 1479372276
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_Radius: 2.3255155
+  m_Center: {x: 2.6729924e-10, y: 0.29117632, z: 0.25053072}
 --- !u!114 &7940165876221852842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,8 +147,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8d2b30006c90c943bc81c18ba2c3548, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 5
-  FlyingHeight: 4
+  moveSpeed: 4
+  flyingHeight: 3
+  followDistance: 2
+  rotationSpeed: 5
   flyingSoundClip: {fileID: 8300000, guid: f3ae173a5b6dfeb48a5588e67c6da3ac, type: 3}
   flappingSoundClip: {fileID: 8300000, guid: 08f71467890a0af4b8857c995e8338e8, type: 3}
-  hasStartedFollowing: 0
+  attackRange: 0
+--- !u!114 &4186106457522651631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6911814585987332355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71b4a17988ffb5e4e8369714f1a96067, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 10
+--- !u!54 &4797301254543883421
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6911814585987332355}
+  serializedVersion: 4
+  m_Mass: 0.001
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

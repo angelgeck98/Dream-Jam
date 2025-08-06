@@ -1,15 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SoundFXManager : MonoBehaviour
 {
     public static SoundFXManager instance;
 
-    [SerializeField] private AudioSource soundFXObject;
-    
-    // Track the current looping sound GameObject
-    private GameObject currentLoopingSound;
+    [SerializeField] private AudioSource soundFXObject; // Prefab for one-shots
+    private AudioSource currentLoopingAudioSource; // Only tracks the AudioSource, not the bird
 
     private void Awake()
     {
@@ -24,51 +20,55 @@ public class SoundFXManager : MonoBehaviour
         }
     }
 
-    // One-shot sounds (your existing method)
+    // One-shot sounds (unchanged)
     public void PlaySoundFX(AudioClip audioClip, Transform spawnTransform, float volume)
     {
-        AudioSource audioSource = Instantiate(soundFXObject, spawnTransform.position, Quaternion.identity);
-        audioSource.clip = audioClip;
-        audioSource.volume = volume; 
-        audioSource.Play();
+        // Create at position but DON'T parent to spawnTransform
+        AudioSource audioSource = Instantiate(
+            soundFXObject, 
+            spawnTransform.position, 
+            Quaternion.identity
+        );
         
-        float clipLength = audioSource.clip.length;
-        Destroy(audioSource.gameObject, clipLength + 0.1f);
-    }
-    
-    // Looping sound using the same soundFXObject approach
-    public void PlayLoopingSound(AudioClip audioClip, Transform spawnTransform, float volume)
-    {
-        // Stop any existing loop first
-        StopLoopingSound();
-        
-        // Create new looping sound using the same pattern
-        AudioSource audioSource = Instantiate(soundFXObject, spawnTransform.position, Quaternion.identity);
         audioSource.clip = audioClip;
         audioSource.volume = volume;
-        audioSource.loop = true; // Enable looping
         audioSource.Play();
         
-        // Track this GameObject so we can stop it later
-        currentLoopingSound = audioSource.gameObject;
-        
-        Debug.Log($"Started looping sound: {audioClip.name}");
+        // Destroy only the audio object, not the parent
+        Destroy(audioSource.gameObject, audioClip.length + 0.1f);
     }
+
+    // Looping sounds now create a dedicated child object
+    public AudioSource PlayLoopingSound(AudioClip audioClip, Transform parentTransform, float volume)
+    {
+        StopLoopingSound(); // Stop any existing loop first
+
+        // Create a new GameObject just for the sound (child of the bird)
+        GameObject soundObj = new GameObject("FlappingSound");
+        soundObj.transform.SetParent(parentTransform); // Attach to bird
+        soundObj.transform.localPosition = Vector3.zero; // Center on bird
+
+        // Add and configure AudioSource
+        AudioSource newSource = soundObj.AddComponent<AudioSource>();
+        newSource.clip = audioClip;
+        newSource.volume = volume;
+        newSource.loop = true;
+        newSource.Play();
+        
+        
+        return newSource;
+
+    }
+
+    // Safely stops ONLY the looping sound (not the bird)
     
-    // Stop the current looping sound
     public void StopLoopingSound()
     {
-        if (currentLoopingSound != null)
+        if (currentLoopingAudioSource != null && currentLoopingAudioSource.gameObject != null)
         {
-            Destroy(currentLoopingSound);
-            currentLoopingSound = null;
-            Debug.Log("Stopped looping sound");
+            Destroy(currentLoopingAudioSource.gameObject); // Only kills the sound object
+            currentLoopingAudioSource = null;
         }
     }
     
-    // Check if looping sound is playing
-    public bool IsLoopingPlaying()
-    {
-        return currentLoopingSound != null;
-    }
 }

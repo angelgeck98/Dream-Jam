@@ -13,6 +13,8 @@ public class FlyingAI : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioClip flyingSoundClip;
     [SerializeField] private AudioClip flappingSoundClip;
+
+    private AudioSource _flappingAudioSource;
     
     [Header("Attack Settings")]
     [SerializeField] private float attackRange = 1.0f;
@@ -40,6 +42,14 @@ public class FlyingAI : MonoBehaviour
         {
             MoveToTarget();
             CheckAttackRange();
+        }
+    }
+    
+    private void OnDestroy()
+    {
+        if (_flappingAudioSource != null)
+        {
+            Destroy(_flappingAudioSource.gameObject);
         }
     }
 
@@ -83,7 +93,7 @@ public class FlyingAI : MonoBehaviour
             hasStartedFollowing = true;
             if (flappingSoundClip != null)
             {
-                SoundFXManager.instance.PlayLoopingSound(flappingSoundClip, transform, 0.7f);
+                _flappingAudioSource = SoundFXManager.instance.PlayLoopingSound(flappingSoundClip, transform, 0.7f);
             }
         }
     }
@@ -100,15 +110,7 @@ public class FlyingAI : MonoBehaviour
         BeginFollowing();
     }
 
-    // Optional: Stop following (useful for cleanup)
-    public void StopFollowing()
-    {
-        hasStartedFollowing = false;
-        if (SoundFXManager.instance != null)
-        {
-            SoundFXManager.instance.StopLoopingSound();
-        }
-    }
+
 
     // Gizmo to visualize attack range
     private void OnDrawGizmosSelected()
